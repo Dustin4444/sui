@@ -1294,7 +1294,7 @@
             "name": "Result",
             "value": {
               "minSupportedProtocolVersion": "1",
-              "maxSupportedProtocolVersion": "88",
+              "maxSupportedProtocolVersion": "89",
               "protocolVersion": "6",
               "featureFlags": {
                 "accept_passkey_in_multisig": false,
@@ -1767,6 +1767,7 @@
                 "max_gas_price": {
                   "u64": "100000"
                 },
+                "max_gas_price_rgp_factor_for_aborted_transactions": null,
                 "max_generic_instantiation_length": {
                   "u64": "32"
                 },

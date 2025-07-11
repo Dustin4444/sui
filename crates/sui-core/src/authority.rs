@@ -2072,8 +2072,9 @@ impl AuthorityState {
         let (kind, signer, _) = transaction.execution_parts();
 
         let silent = true;
-        let executor = sui_execution::executor(protocol_config, silent, None)
-            .expect("Creating an executor should not fail here");
+        let executor =
+            sui_execution::executor(protocol_config, silent, epoch_store.get_chain(), None)
+                .expect("Creating an executor should not fail here");
 
         let expensive_checks = false;
         let (inner_temp_store, _, effects, _timings, execution_error) = executor
@@ -2267,6 +2268,7 @@ impl AuthorityState {
         let executor = sui_execution::executor(
             protocol_config,
             true, // silent
+            epoch_store.get_chain(),
             None,
         )
         .expect("Creating an executor should not fail here");
@@ -2448,8 +2450,13 @@ impl AuthorityState {
             }
         };
 
-        let executor = sui_execution::executor(protocol_config, /* silent */ true, None)
-            .expect("Creating an executor should not fail here");
+        let executor = sui_execution::executor(
+            protocol_config,
+            /* silent */ true,
+            epoch_store.get_chain(),
+            None,
+        )
+        .expect("Creating an executor should not fail here");
         let gas_data = transaction.gas_data().clone();
         let intent_msg = IntentMessage::new(
             Intent {

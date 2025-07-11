@@ -74,6 +74,14 @@ impl CheckpointContents {
         Ok(Some(summary.digest().base58_encode()))
     }
 
+    /// The Base64 serialized BCS bytes of CheckpointSummary for this checkpoint.
+    async fn checkpoint_bcs(&self) -> Result<Option<Base64>, RpcError> {
+        let Some((summary, _, _)) = &self.contents else {
+            return Ok(None);
+        };
+        Ok(Some(Base64::from(bcs::to_bytes(summary).unwrap())))
+    }
+
     /// A 32-byte hash that uniquely identifies the checkpoint's content, encoded in Base58.
     async fn content_digest(&self) -> Result<Option<String>, RpcError> {
         let Some((summary, _, _)) = &self.contents else {

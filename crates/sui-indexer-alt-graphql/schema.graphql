@@ -33,6 +33,10 @@ type Checkpoint {
 	"""
 	digest: String
 	"""
+	The Base64 serialized BCS bytes of CheckpointSummary for this checkpoint.
+	"""
+	checkpointBcs: Base64
+	"""
 	A 32-byte hash that uniquely identifies the checkpoint's content, encoded in Base58.
 	"""
 	contentDigest: String

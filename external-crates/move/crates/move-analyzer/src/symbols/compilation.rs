@@ -31,8 +31,8 @@ use vfs::{
 
 use move_command_line_common::files::FileHash;
 use move_compiler::{
-    CompiledModuleInfoMap, PASS_CFGIR, PASS_PARSER, PASS_TYPING,
-    construct_precompiled_module_infos,
+    PASS_CFGIR, PASS_PARSER, PASS_TYPING, PreCompiledModuleInfoMap,
+    construct_precompiled_module_info,
     editions::{Edition, Flavor},
     expansion::ast::ModuleIdent,
     linters::LintLevel,
@@ -89,7 +89,7 @@ pub struct PrecomputedPkgInfo {
     /// Hash of dependency source files
     pub deps_hash: String,
     /// Precompiled deps
-    pub deps: Arc<CompiledModuleInfoMap>,
+    pub deps: Arc<PreCompiledModuleInfoMap>,
     /// Symbols computation data
     pub deps_symbols_data: Arc<SymbolsComputationData>,
     /// Compiled user program
@@ -110,7 +110,7 @@ pub struct PrecomputedPkgInfo {
 #[derive(Clone)]
 pub struct AnalyzedPkgInfo {
     /// Cached fully compiled program representing dependencies
-    pub program_deps: Arc<CompiledModuleInfoMap>,
+    pub program_deps: Arc<PreCompiledModuleInfoMap>,
     /// Cached symbols computation data for dependencies
     pub symbols_data: Option<Arc<SymbolsComputationData>>,
     /// Compiled user program
@@ -267,7 +267,7 @@ pub fn get_compiled_pkg(
                         )
                     }
                     _ => (
-                        construct_precompiled_module_infos(
+                        construct_precompiled_module_info(
                             src_deps,
                             None,
                             compiler_flags,
@@ -345,7 +345,7 @@ pub fn get_compiled_pkg(
                 let compiler = compiler.set_ide_mode();
                 // extract expansion AST
                 let (files, compilation_result) = compiler
-                    .set_pre_compiled_module_infos_opt(compiled_libs)
+                    .set_pre_compiled_module_info_opt(compiled_libs)
                     .set_files_to_compile(if full_compilation {
                         None
                     } else {
@@ -561,7 +561,7 @@ fn merge_user_programs(
     // file hashes - if cached module's hash is on the list of new file hashes, it means
     // that nothing changed)
     parsed_program_cached.source_definitions.retain(|pkg_def| {
-        let (pkg_modified, _) =
+        let pkg_modified =
             is_parsed_pkg_modified(pkg_def, &files_to_compile, file_hashes_new.clone());
         !pkg_modified
     });
@@ -576,7 +576,7 @@ fn merge_user_programs(
     // cached file hashes, it means that nothing's changed, but we still
     // need to update the named address map index)
     for pkg_def in parsed_program_new.source_definitions {
-        let (pkg_modified, pkg_hash) =
+        let pkg_modified =
             is_parsed_pkg_modified(&pkg_def, &files_to_compile, file_hashes_cached.clone());
 
         if pkg_modified {
@@ -584,6 +584,10 @@ fn merge_user_programs(
         } else {
             // find cached package definition with the same hash
             // and update its named address map index
+            let pkg_hash = match &pkg_def.def {
+                P::Definition::Module(mdef) => mdef.loc.file_hash(),
+                P::Definition::Address(adef) => adef.loc.file_hash(),
+            };
             let cached_pkg_def =
                 parsed_program_cached
                     .source_definitions
@@ -624,20 +628,18 @@ fn is_typed_mod_modified(
 /// file hash in the package's modules with the file hashes provided
 /// as an argument to see if all module hashes are included
 /// in the hashes provided. We only consider file hashes from modified
-/// files. Also returns the hash of the package's location.
+/// files.
 fn is_parsed_pkg_modified(
     pkg_def: &P::PackageDefinition,
     modified_files: &BTreeSet<PathBuf>,
     file_hashes: Arc<BTreeMap<PathBuf, FileHash>>,
-) -> (bool, FileHash) {
+) -> bool {
     let pkg_loc = match &pkg_def.def {
         P::Definition::Module(mdef) => mdef.loc,
         P::Definition::Address(adef) => adef.loc,
     };
-    (
-        !hash_included_in_file_hashes(pkg_loc.file_hash(), modified_files, file_hashes),
-        pkg_loc.file_hash(),
-    )
+
+    !hash_included_in_file_hashes(pkg_loc.file_hash(), modified_files, file_hashes)
 }
 
 /// Checks if a hash is included in the file hashes list.

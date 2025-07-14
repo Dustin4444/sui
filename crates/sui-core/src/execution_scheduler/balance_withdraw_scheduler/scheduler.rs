@@ -4,8 +4,9 @@
 use std::{collections::BTreeMap, sync::Arc};
 
 use crate::execution_scheduler::balance_withdraw_scheduler::{
-    balance_read::AccountBalanceRead, naive_scheduler::NaiveBalanceWithdrawScheduler,
-    BalanceSettlement, ScheduleResult, ScheduleStatus, TxBalanceWithdraw,
+    balance_read::AccountBalanceRead, eager_scheduler::EagerBalanceWithdrawScheduler,
+    naive_scheduler::NaiveBalanceWithdrawScheduler, BalanceSettlement, ScheduleResult,
+    ScheduleStatus, TxBalanceWithdraw,
 };
 use futures::stream::FuturesUnordered;
 use mysten_metrics::monitored_mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender};
@@ -67,6 +68,29 @@ impl BalanceWithdrawScheduler {
             unbounded_channel("withdraw_scheduler_settlements");
         let scheduler = Arc::new(Self {
             inner,
+            withdraw_sender,
+            settlement_sender,
+        });
+        tokio::spawn(scheduler.clone().process_withdraw_task(withdraw_receiver));
+        tokio::spawn(
+            scheduler
+                .clone()
+                .process_settlement_task(settlement_receiver, starting_accumulator_version),
+        );
+        scheduler
+    }
+
+    pub fn new_eager(
+        balance_read: Arc<dyn AccountBalanceRead>,
+        starting_accumulator_version: SequenceNumber,
+    ) -> Arc<Self> {
+        let inner = EagerBalanceWithdrawScheduler::new(balance_read, starting_accumulator_version);
+        let (withdraw_sender, withdraw_receiver) =
+            unbounded_channel("withdraw_scheduler_withdraws");
+        let (settlement_sender, settlement_receiver) =
+            unbounded_channel("withdraw_scheduler_settlements");
+        let scheduler = Arc::new(Self {
+            inner: inner as Arc<dyn BalanceWithdrawSchedulerTrait>,
             withdraw_sender,
             settlement_sender,
         });

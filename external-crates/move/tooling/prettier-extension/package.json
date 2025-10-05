@@ -78,7 +78,7 @@
 	"dependencies": {
 		"@mysten/prettier-plugin-move": "^0.3.1",
 		"cosmiconfig": "^9.0.0",
-		"prettier": "^3.3.2"
+		"prettier": "^3.6.2"
 	},
 	"devDependencies": {
 		"@vscode/vsce": "^3.2.1"

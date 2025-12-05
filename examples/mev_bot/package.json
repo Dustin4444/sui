@@ -10,7 +10,7 @@
 	},
 	"dependencies": {
 		"@mysten/bcs": "^1.2.0",
-		"@mysten/sui": "^1.18.0",
+		"@mysten/sui": "^1.45.1",
 		"p-limit": "^6.1.0"
 	},
 	"devDependencies": {

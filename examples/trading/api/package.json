@@ -25,7 +25,7 @@
 		"typescript": "^5.5.3"
 	},
 	"dependencies": {
-		"@mysten/sui": "^1.18.0",
+		"@mysten/sui": "^1.45.1",
 		"@prisma/client": "^5.16.2",
 		"cors": "^2.8.5",
 		"express": "^4.21.2"

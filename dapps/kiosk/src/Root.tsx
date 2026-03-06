@@ -4,6 +4,7 @@
 import { createNetworkConfig, SuiClientProvider, WalletProvider } from '@mysten/dapp-kit';
 import { getFullnodeUrl } from '@mysten/sui/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Analytics } from '@vercel/analytics/react';
 import { Toaster } from 'react-hot-toast';
 import { Outlet } from 'react-router-dom';
 
@@ -33,6 +34,7 @@ export default function Root() {
 							Copyright © Mysten Labs, Inc.
 						</div>
 						<Toaster position="bottom-center" />
+						<Analytics />
 					</KioskClientProvider>
 				</WalletProvider>
 			</SuiClientProvider>

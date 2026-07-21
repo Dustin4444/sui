@@ -28,7 +28,7 @@
   "dependencies": {
     "@amplitude/analytics-browser": "^2.5.3",
     "@docusaurus/plugin-content-docs": "3.9.2",
-    "ajv": "^8.17.1",
+    "ajv": "^8.18.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@graphql-markdown/docusaurus": "^1.24.0",
@@ -39,7 +39,7 @@
     "afdocs": "^0.3.2",
     "algoliasearch": "^5.25.0",
     "autoprefixer": "^10.4.18",
-    "axios": "^1.6.8",
+    "axios": "^1.16.0",
     "clsx": "^2.1.0",
     "copy-text-to-clipboard": "^3.2.0",
     "docusaurus-plugin-copy-page-button": "^0.3.5",

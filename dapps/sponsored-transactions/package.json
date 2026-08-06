@@ -20,7 +20,7 @@
 	},
 	"devDependencies": {
 		"@mysten/dapp-kit": "^0.14.53",
-		"@mysten/sui": "^1.18.0",
+		"@mysten/sui": "^1.45.1",
 		"@types/react": "^18.3.3",
 		"@types/react-dom": "^18.3.0",
 		"@vitejs/plugin-react": "^4.4.1",

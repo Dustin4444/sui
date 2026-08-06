@@ -19,7 +19,7 @@
 		"react-dom": "^18.3.1"
 	},
 	"devDependencies": {
-		"@mysten/dapp-kit": "^0.14.53",
+		"@mysten/dapp-kit": "^0.16.0",
 		"@mysten/sui": "^1.18.0",
 		"@types/react": "^18.3.3",
 		"@types/react-dom": "^18.3.0",

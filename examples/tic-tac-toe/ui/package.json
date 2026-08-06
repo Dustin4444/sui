@@ -11,7 +11,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@mysten/dapp-kit": "^0.14.53",
+        "@mysten/dapp-kit": "^0.16.0",
         "@mysten/sui": "^1.18.0",
         "@radix-ui/colors": "^3.0.0",
         "@radix-ui/react-icons": "^1.3.2",
